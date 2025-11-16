@@ -5,14 +5,14 @@ from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-from app.database import get_db
-from app.models.user import User
-from app.schemas.user import TokenData
+from backend.app.database import get_db
+from backend.app.models.user import User
+from backend.app.schemas.user import TokenData
 
 # Configurações
 SECRET_KEY = "sua-chave-secreta-super-forte-aqui-change-in-production"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 30  # Define o tempo de expiração do token em minutos
 
 # Contexto para hash de senhas
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -24,8 +24,8 @@ def verify_password(plain_password, hashed_password):
     """Verifica se a senha está correta"""
     return pwd_context.verify(plain_password, hashed_password)
 
-def get_password_hash(password):
-    """Gera hash da senha"""
+def get_password_hash(password: str) -> str:
+    """Gera o hash da senha usando bcrypt"""
     return pwd_context.hash(password)
 
 def authenticate_user(db: Session, email: str, password: str):

@@ -26,15 +26,31 @@ export default function EventForm() {
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
+    const validateField = (field, value) => {
+        let error = '';
+        if (!value) {
+            error = `${field} é obrigatório`;
+        } else if (field === 'title' && value.length < 3) {
+            error = 'O título deve ter pelo menos 3 caracteres';
+        } else if (field === 'description' && value.length < 10) {
+            error = 'A descrição deve ter pelo menos 10 caracteres';
+        }
+        return error;
+    };
+
     const validateForm = () => {
         const newErrors = {};
-        if (!event.title) newErrors.title = 'Título é obrigatório';
-        if (!event.description) newErrors.description = 'Descrição é obrigatória';
-        if (!event.date) newErrors.date = 'Data é obrigatória';
-        if (!event.location) newErrors.location = 'Local é obrigatório';
-        
+        Object.keys(event).forEach((field) => {
+            const error = validateField(field, event[field]);
+            if (error) newErrors[field] = error;
+        });
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
+    };
+
+    const handleBlur = (field) => {
+        const error = validateField(field, event[field]);
+        setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
     };
 
     const handleSubmit = async (e) => {
@@ -71,6 +87,7 @@ export default function EventForm() {
                             label="Título"
                             value={event.title}
                             onChange={(e) => setEvent({ ...event, title: e.target.value })}
+                            onBlur={() => handleBlur('title')}
                             error={Boolean(errors.title)}
                             helperText={errors.title}
                             required
@@ -81,6 +98,7 @@ export default function EventForm() {
                             rows={4}
                             value={event.description}
                             onChange={(e) => setEvent({ ...event, description: e.target.value })}
+                            onBlur={() => handleBlur('description')}
                             error={Boolean(errors.description)}
                             helperText={errors.description}
                             required
@@ -90,6 +108,7 @@ export default function EventForm() {
                             type="datetime-local"
                             value={event.date}
                             onChange={(e) => setEvent({ ...event, date: e.target.value })}
+                            onBlur={() => handleBlur('date')}
                             error={Boolean(errors.date)}
                             helperText={errors.date}
                             InputLabelProps={{ shrink: true }}
@@ -99,6 +118,7 @@ export default function EventForm() {
                             label="Local"
                             value={event.location}
                             onChange={(e) => setEvent({ ...event, location: e.target.value })}
+                            onBlur={() => handleBlur('location')}
                             error={Boolean(errors.location)}
                             helperText={errors.location}
                             required
