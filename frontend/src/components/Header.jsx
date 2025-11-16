@@ -24,6 +24,13 @@ export default function Header() {
                     >
                         Criar Evento
                     </Button>
+                    <Button 
+                        color="inherit" 
+                        component={RouterLink} 
+                        to="/login"
+                    >
+                        Login
+                    </Button>
                 </Box>
             </Toolbar>
         </AppBar>
